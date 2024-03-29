@@ -34,7 +34,11 @@
                      {{ recipe.name }}
                 </h2></a></tr>
                  <tr>
-                     <td><img src="{{ recipe.image.url }}" alt="Картинка рецепта" style="width:250px; height: 250px" ></td>
+                     <td>
+                         {% if recipe.image %}
+                            <img src="{{ recipe.image.url }}" alt="Картинка рецепта" style="width:250px; height: 250px" >
+                         {% endif %}
+                     </td>
                     <td>{{ recipe.description }}</td>
                     <td><b>Время приготовления: {{ recipe.cooking_time }}<b/></td>
                  </tr>

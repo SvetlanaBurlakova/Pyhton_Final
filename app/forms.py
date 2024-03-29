@@ -4,20 +4,39 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 #from django.contrib.auth.models import User
 from user.models  import User
-from .models import Category
+from .models import Category, Ingredient, IngredientInfo
 from django.core.exceptions import ValidationError
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms.widgets import PasswordInput, TextInput
 from django import forms
+from django.forms import formset_factory
+
 #
 #
 User = get_user_model()
 
+
+class IngredientForm(forms.Form):
+    Ingredient = forms.ModelChoiceField(queryset=Ingredient.objects.all(), label='Выберите ингредиент к добавлению')
+    count = forms.IntegerField(label='Введите количество')
+    class Meta:
+        model = IngredientInfo
+        fields = ['Ingredient.name', 'count']
+
+
+IngredientFormSet = formset_factory(IngredientForm)
+
+
 class RecipeForm(forms.Form):
     name = forms.CharField(max_length=100, label='Название рецепта')
     description = forms.CharField(widget=forms.Textarea, label='Краткое описание рецепта')
+    ingredients = Ingredient.objects.all()
+    choices = ((ing.name, ing.name) for ing in ingredients)
+    #ingredient = forms.ModelChoiceField(queryset=Ingredient.objects.select_related('category'))
+
+    #ingredients = forms.MultipleChoiceField(choices=IngredientFormSet)
     steps = forms.CharField(widget=forms.Textarea, label='Шаги приготовления')
     cooking_time = forms.DurationField(label='Общее время приготовления в формате HH:MM:SS')
     author = forms.RadioSelect(attrs={'class': 'form-check-input'})

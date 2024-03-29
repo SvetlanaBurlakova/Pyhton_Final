@@ -14,4 +14,6 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('all_recipes/<int:author_id>', views.get_recipes_by_author, name='get_recipes_by_author'),
     path('all_recipes/', views.get_recipes, name='get_recipes'),
+    path('add_ingredient/<int:recipe_id>', views.add_ingredient_to_the_recipe, name='add_ingredient'),
+    path('delete_ingredient/<int:recipe_id>/<int:info_id>', views.delete_ingredient, name='delete_ingredient'),
 ]

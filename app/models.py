@@ -36,7 +36,7 @@ class Recipe(models.Model):
     description = models.CharField(max_length=200)
     steps = models.TextField(max_length=1000)
     cooking_time = models.DurationField(default=0)
-    image = models.ImageField(upload_to='recipes/')
+    image = models.ImageField(upload_to='recipes/', default=None)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     ingredients = models.ManyToManyField(Ingredient, through="IngredientInfo")
     category = models.ManyToManyField(Category)

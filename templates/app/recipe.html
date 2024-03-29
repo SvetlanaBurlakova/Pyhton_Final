@@ -27,13 +27,19 @@
     </h1>
 
     <p ><b>{{ recipe.description }}</b></p>
+    <p><b>Список ингредиентов:</b></p>
+    {% for info in ingredients_infos %}
+        <p>{{ info.count }} {{ info.ingredient.measurement_type }} {{ info.ingredient.name }} </p>
+    {% endfor %}
     <p><b>Этапы приготовления:</b></p>
-    <p>{{ step }}</p>
+    <p>{{ recipe.steps }}</p>
     <p><b>Время приготовления: {{ recipe.cooking_time }}</b></p>
     <p><b>Автор рецепта: {{ recipe.author }}<b></p>
-    <p><b>Категории рецепта: <b></p>
+    <p><b>Категории рецепта:<b></p>
     {% for cat in categories %}
         <p><a href='{% url "category" cat.id %}'>{{ cat.name }}</a></p>
     {% endfor %}
-     <p><img src="{{ recipe.image.url }}" alt=""> </p>
+    {% if recipe.image %}
+        <p><img src="{{ recipe.image.url }}" alt=""> </p>
+    {% endif %}">
 {% endblock %}

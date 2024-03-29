@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.files.storage import FileSystemStorage
 from django import forms
-from .models import Recipe, Category, Ingredient
-from .forms import RecipeForm, CustomUserCreationForm, LoginForm
+from .models import Recipe, Category, Ingredient, IngredientInfo
+from .forms import RecipeForm, CustomUserCreationForm, LoginForm, IngredientForm
 from random import sample
 from user.models import User
 from django.contrib.auth.forms import AuthenticationForm
@@ -23,17 +23,19 @@ def index(request):
 def get_recipe(request, recipe_id):
     result = get_object_or_404(Recipe, pk=recipe_id)
     steps = result.steps.split('/')
+    ingredients_infos = IngredientInfo.objects.filter(recipe=result).select_related('ingredient').all()
     categories = Category.objects.filter(recipe=result)
-    print(categories)
     context = {'title': result.name, 'recipe': result, 'steps': steps,
-               'categories': categories}
+               'categories': categories, 'ingredients_infos': ingredients_infos}
     return render(request, 'app/recipe.html', context=context)
 
 
 def get_recipe_auth(request, recipe_id):
     result = get_object_or_404(Recipe, pk=recipe_id)
+    ingredients_infos = IngredientInfo.objects.filter(recipe=result).select_related('ingredient').all()
     categories = Category.objects.filter(recipe=result)
-    context = {'title': result.name, 'recipe': result, 'categories': categories, 'recipe_id': recipe_id}
+    context = {'title': result.name, 'recipe': result, 'categories': categories, 'recipe_id': recipe_id,
+               'ingredients_infos': ingredients_infos}
     return render(request, 'app/recipe_auth.html', context=context)
 
 def change_recipe(request, recipe_id):
@@ -41,8 +43,9 @@ def change_recipe(request, recipe_id):
         form = RecipeForm(request.POST, request.FILES)
         if form.is_valid():
             image = form.cleaned_data['image']
-            fs = FileSystemStorage()
-            fs.save(image.name, image)
+            if image:
+                fs = FileSystemStorage()
+                fs.save(image.name, image)
             author = User.objects.get(pk=request.user.id)
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
@@ -87,8 +90,9 @@ def add_recipe(request):
         form = RecipeForm(request.POST, request.FILES)
         if form.is_valid():
             image = form.cleaned_data['image']
-            fs = FileSystemStorage()
-            fs.save(image.name, image)
+            if image is not None:
+                fs = FileSystemStorage()
+                fs.save(image.name, image)
             author = User.objects.get(pk=request.user.id)
             name = form.cleaned_data['name']
             description = form.cleaned_data['description']
@@ -126,7 +130,7 @@ def get_recipes_by_author(request, author_id):
 def get_recipes(request):
     recipes = sample(list(Recipe.objects.all()), k=2)
     context = {'title': 'Список рецептов', 'recipes': recipes}
-    return render(request, 'app/index_login.html', context=context)
+    return render(request, 'app/index.html', context=context)
 
 
 def registration(request):
@@ -171,3 +175,34 @@ def signin(request):
 def logout_view(request):
     logout(request)
     return index(request)
+
+
+def add_ingredient_to_the_recipe(request, recipe_id):
+    recipe = get_object_or_404(Recipe, id=recipe_id)
+    if request.method == 'POST':
+        form = IngredientForm(request.POST)
+        if form.is_valid():
+            ingredient = form.cleaned_data['Ingredient']
+            count = form.cleaned_data['count']
+            ingredient_info = IngredientInfo(recipe_id=recipe_id, ingredient_id=ingredient.id, count=count)
+            ingredient_info.save()
+            result = get_object_or_404(Recipe, pk=recipe_id)
+            ingredients_infos = IngredientInfo.objects.filter(recipe=result).select_related('ingredient').all()
+            categories = Category.objects.filter(recipe=result)
+            context = {'title': result.name, 'recipe': result, 'categories': categories, 'recipe_id': recipe_id,
+                       'ingredients_infos': ingredients_infos}
+            return render(request, 'app/recipe_auth.html', context=context)
+    else:
+        form = IngredientForm()
+        context = {'title': f'Добавление нового ингредиента к рецепту {recipe.name}', 'form': form}
+        return render(request, 'app/add_ingredient.html', context=context)
+
+
+def delete_ingredient(request, recipe_id, info_id):
+    IngredientInfo(pk=info_id).delete()
+    result = get_object_or_404(Recipe, pk=recipe_id)
+    ingredients_infos = IngredientInfo.objects.filter(recipe=result).select_related('ingredient').all()
+    categories = Category.objects.filter(recipe=result)
+    context = {'title': result.name, 'recipe': result, 'categories': categories, 'recipe_id': recipe_id,
+               'ingredients_infos': ingredients_infos}
+    return render(request, 'app/recipe_auth.html', context=context)

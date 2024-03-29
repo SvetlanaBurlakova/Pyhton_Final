@@ -5,6 +5,24 @@
 {% endblock %}
 
 {% block content %}
+    <style>
+     p {
+        font-family: 'Arial Narrow'; 
+         font-size: 18px;
+     }
+     h1 {
+        font-family: 'Arial Narrow'; 
+         font-size: 28px;
+     }
+     h2 {
+        font-family: 'Arial Narrow'; 
+         font-size: 24px;
+     }
+     table {
+        font-family: 'Arial Narrow'; 
+         font-size: 18px;
+     }
+    </style>
     <header>
     <table align="left">
         <tr>
@@ -16,13 +34,14 @@
         {{ title }}
     </h1>
     <h2><a href='{% url "change_recipe" recipe.id %}'>Изменить рецепт</a></h2>
-    <style>
-     p {
-        font-family: 'Arial Narrow'; 
-         font-size: 18px;
-     }
-    </style>
+
     <p ><b>{{ recipe.description }}</b></p>
+        <p><b>Список ингредиентов:</b></p>
+    {% for info in ingredients_infos %}
+        <p>{{ info.count }} {{ info.ingredient.measurement_type }} 
+            {{ info.ingredient.name }}<a href="{% url "delete_ingredient" recipe.id info.id %}">Удалить</a></p>
+    {% endfor %}
+    <p><a href='{% url "add_ingredient" recipe.id %}'>Добавить ингредиент</a></p>
     <p><b>Этапы приготовления:</b></p>
     <p>{{ recipe.steps }}</p>
     <p><b>Время приготовления: {{ recipe.cooking_time }}</b></p>
@@ -31,5 +50,7 @@
     {% for cat in categories %}
         <p><a href='{% url "category" cat.id %}'>{{ cat.name }}</a></p>
     {% endfor %}
-     <p><img src="{{ recipe.image.url }}" alt=""> </p>
+    {% if recipe.image %}
+        <p><img src="{{ recipe.image.url }}" alt=""> </p>
+    {% endif %}
 {% endblock %}
