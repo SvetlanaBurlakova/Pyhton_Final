@@ -15,7 +15,7 @@ from django.views.generic import RedirectView
 # Create your views here.
 def index(request):
     recipes = Recipe.objects.all()
-    result = sample(list(recipes), k=2)
+    result = sample(list(recipes), k=1)
     context = {'title': 'Список рецептов', 'recipes': result}
     return render(request, 'app/index.html', context=context)
 
@@ -139,7 +139,7 @@ def registration(request):
         if form.is_valid():
             form.save()
             recipes = Recipe.objects.all()
-            result = sample(list(recipes), k=2)
+            result = sample(list(recipes), k=1)
             context = {'title': 'Список рецептов', 'recipes': result}
             return render(request, 'app/index.html', context=context)
     else:
@@ -161,7 +161,7 @@ def signin(request):
                 if user.author:
                     recipes = Recipe.objects.filter(author=user).all()
                     if len(recipes) == 0:
-                        recipes = sample(list(Recipe.objects.all()), k=2)
+                        recipes = sample(list(Recipe.objects.all()), k=1)
                     context = {'title': 'Добро пожалывать на наш сайт!', 'recipes': recipes}
                     return render(request, 'app/index_login_author.html', context=context)
                 else:

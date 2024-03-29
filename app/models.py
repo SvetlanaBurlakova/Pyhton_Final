@@ -7,21 +7,13 @@ from django.contrib.auth import get_user_model
 #
 User = get_user_model()
 
-# Create your models here.
-# class User(AbstractUser):
-#     first_name = models.CharField(max_length=50)
-#     last_name = models.CharField(max_length=50)
-#     email = models.EmailField()
-#     registration_date = models.DateField(default=timezone.now)
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=100)
     measurement_type = models.CharField(max_length=10)
-    count = models.IntegerField(default=0)
 
     def __str__(self):
         return f'{self.name}, {self.measurement_type}'
-
 
 
 class Category(models.Model):

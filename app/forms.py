@@ -32,18 +32,17 @@ IngredientFormSet = formset_factory(IngredientForm)
 class RecipeForm(forms.Form):
     name = forms.CharField(max_length=100, label='Название рецепта')
     description = forms.CharField(widget=forms.Textarea, label='Краткое описание рецепта')
-    ingredients = Ingredient.objects.all()
-    choices = ((ing.name, ing.name) for ing in ingredients)
-    #ingredient = forms.ModelChoiceField(queryset=Ingredient.objects.select_related('category'))
-
-    #ingredients = forms.MultipleChoiceField(choices=IngredientFormSet)
+    # ingredients = Ingredient.objects.all()
     steps = forms.CharField(widget=forms.Textarea, label='Шаги приготовления')
     cooking_time = forms.DurationField(label='Общее время приготовления в формате HH:MM:SS')
     author = forms.RadioSelect(attrs={'class': 'form-check-input'})
     image = forms.ImageField(label='Изображение готового блюда', required=False)
-    categories = Category.objects.all()
-    choices = ((c.name, c.name) for c in categories)
-    category = forms.MultipleChoiceField(choices=choices, label='Категории')
+
+    def __init__(self, *args, **kwargs):
+        super(RecipeForm, self).__init__(*args, **kwargs)
+        categories = Category.objects.all()
+        choices = ((c.name, c.name) for c in categories)
+        self.fields['category'] = forms.MultipleChoiceField(choices=choices, label='Категории')
 
 
 class CustomUserCreationForm(UserCreationForm):
