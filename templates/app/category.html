@@ -1,0 +1,40 @@
+{%  extends 'base.html' %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block content %}
+	<h1>
+        {{ title }}
+    </h1>
+        <style>
+     td {
+        font-family: 'Arial Narrow';
+         font-size: 18px;
+     }
+    </style>
+        <header>
+    <table align="left">
+        <tr>
+            <td><a href='{% url "index" %}'>Вернуться к списку рецептов</a></td>
+        </tr>
+    </table>
+    </header>
+    <p>
+        {% for recipe in recipes %}
+            <table>
+                <tr><a href='{% url "recipe" recipe.id %}'><h2  style="font-family: 'Arial Narrow'; font-size: 24px;" align="center">
+                     {{ recipe.name }}
+                </h2></a></tr>
+                 <tr>
+                     <td><img src="{{ recipe.image.url }}" alt="Картинка рецепта" style="width:250px; height: 250px" ></td>
+                    <td>{{ recipe.description }}</td>
+                    <td><b>Время приготовления: {{ recipe.cooking_time }}<b/></td>
+                 </tr>
+            </table>
+
+        {%  endfor %}
+         
+    </p>
+{% endblock %}

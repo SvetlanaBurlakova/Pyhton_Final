@@ -1,0 +1,39 @@
+{%  extends 'base.html' %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block content %}
+    <style>
+     p {
+        font-family: 'Arial Narrow'; 
+         font-size: 18px;
+     }
+     table {
+        font-family: 'Arial Narrow'; 
+         font-size: 18px;
+     }
+    </style>
+    <header>
+    <table align="left">
+        <tr>
+            <td><a href='{% url "get_recipes" %}'>Вернуться к списку рецептов</a></td>
+        </tr>
+    </table>
+    </header>
+	<h1 align="center">
+        {{ title }}
+    </h1>
+
+    <p ><b>{{ recipe.description }}</b></p>
+    <p><b>Этапы приготовления:</b></p>
+    <p>{{ step }}</p>
+    <p><b>Время приготовления: {{ recipe.cooking_time }}</b></p>
+    <p><b>Автор рецепта: {{ recipe.author }}<b></p>
+    <p><b>Категории рецепта: <b></p>
+    {% for cat in categories %}
+        <p><a href='{% url "category" cat.id %}'>{{ cat.name }}</a></p>
+    {% endfor %}
+     <p><img src="{{ recipe.image.url }}" alt=""> </p>
+{% endblock %}

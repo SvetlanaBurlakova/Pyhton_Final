@@ -1,0 +1,35 @@
+{%  extends 'base.html' %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block content %}
+    <header>
+    <table align="left">
+        <tr>
+            <td><a href='{% url "get_recipes_by_author" recipe.author.id %}'>Вернуться к списку рецептов</a></td>
+        </tr>
+    </table>
+    </header>
+	<h1 align="center">
+        {{ title }}
+    </h1>
+    <h2><a href='{% url "change_recipe" recipe.id %}'>Изменить рецепт</a></h2>
+    <style>
+     p {
+        font-family: 'Arial Narrow'; 
+         font-size: 18px;
+     }
+    </style>
+    <p ><b>{{ recipe.description }}</b></p>
+    <p><b>Этапы приготовления:</b></p>
+    <p>{{ recipe.steps }}</p>
+    <p><b>Время приготовления: {{ recipe.cooking_time }}</b></p>
+    <p><b>Автор рецепта: {{ recipe.author }}<b></p>
+    <p><b>Категории рецепта: <b></p>
+    {% for cat in categories %}
+        <p><a href='{% url "category" cat.id %}'>{{ cat.name }}</a></p>
+    {% endfor %}
+     <p><img src="{{ recipe.image.url }}" alt=""> </p>
+{% endblock %}

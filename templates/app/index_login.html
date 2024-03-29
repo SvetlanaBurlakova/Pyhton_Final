@@ -1,0 +1,46 @@
+{%  extends 'base.html' %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block content %}
+    <header>
+    <table align="right">
+        <tr>
+            <td><a href='{% url "logout" %}'>Выход</a></td>
+        </tr>
+    </table>
+    </header>
+	<h1>
+        {{ title }}
+    </h1>
+
+    <style>
+     td {
+        font-family: 'Arial Narrow';
+         font-size: 18px;
+     }
+     p {
+        font-family: 'Arial Narrow';
+         font-size: 18px;
+     }
+    </style>
+
+    <p>
+        {% for recipe in recipes %}
+            <table>
+                <tr><a href='{% url "recipe" recipe.id %}'><h2  style="font-family: 'Arial Narrow'; font-size: 24px;" align="center">
+                     {{ recipe.name }}
+                </h2></a></tr>
+                 <tr>
+                     <td><img src="{{ recipe.image.url }}" alt="Картинка рецепта" style="width:250px; height: 250px" ></td>
+                    <td>{{ recipe.description }}</td>
+                    <td><b>Время приготовления: {{ recipe.cooking_time }}<b/></td>
+                 </tr>
+            </table>
+
+        {%  endfor %}
+         
+    </p>
+{% endblock %}
