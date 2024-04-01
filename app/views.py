@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.core.files.storage import FileSystemStorage
@@ -83,9 +83,10 @@ def add_recipe(request):
 def change_recipe(request, recipe_id):
     if request.method == 'POST':
         form = RecipeForm(request.POST, request.FILES)
+        recipe = Recipe.objects.get(pk=recipe_id)
         if form.is_valid():
             image = form.cleaned_data['image']
-            if image:
+            if image is not None:
                 fs = FileSystemStorage()
                 fs.save(image.name, image)
             author = User.objects.get(pk=request.user.id)
@@ -95,17 +96,15 @@ def change_recipe(request, recipe_id):
             cooking_time = form.cleaned_data['cooking_time']
             categories = form.cleaned_data['category']
             categories_set = set(Category.objects.get(name=c) for c in categories)
-            recipe = Recipe(name=name, description=description, steps=steps, cooking_time=cooking_time,
-                            image=image, author=author)
             recipe.save()
             for categoryEntity in categories_set:
                 recipe.category.add(categoryEntity)
             recipe.save()
             Recipe.objects.filter(pk=recipe_id).update(name=name, description=description, steps=steps, cooking_time=cooking_time,
-                            image=image, author=author)
+                          image=image, author=author)
+            recipe = Recipe.objects.get(pk=recipe_id)
             context = {'title': name, 'recipe': recipe, 'categories': categories_set}
             return render(request, 'app/recipe_auth.html', context=context)
-
     else:
         result = get_object_or_404(Recipe, pk=recipe_id)
         form = RecipeForm()
@@ -123,11 +122,9 @@ def change_recipe(request, recipe_id):
 
 def delete_recipe(request, recipe_id):
     Recipe.objects.filter(pk=recipe_id).delete()
-    print(recipe_id)
     user = User.objects.get(pk=request.user.id)
     recipes = Recipe.objects.filter(author=user).all()
     if len(recipes) == 0:
-        recipes = sample(list(Recipe.objects.all()), k=2)
         context = {'title': 'Рецепт удален, У вас нет больше загруженных рецептов', 'recipes': []}
     else:
         context = {'title': 'Рецепт удален', 'recipes': recipes}
