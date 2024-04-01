@@ -132,12 +132,11 @@ def delete_recipe(request, recipe_id):
     return render(request, 'app/index_login_author.html', context=context)
 
 
-
 def get_recipes_by_author(request, author_id):
     user = get_object_or_404(User, pk=author_id)
     recipes = Recipe.objects.filter(author=user).all()
     if len(recipes) == 0:
-        recipes = sample(list(Recipe.objects.all()), k=2)
+        recipes = sample(list(Recipe.objects.all()), k=5)
         context ={'title': 'У вас нет загруженных рецептов', 'recipes': recipes}
     else:
         context = {'title': 'Список ваших рецептов', 'recipes': recipes}
@@ -145,7 +144,7 @@ def get_recipes_by_author(request, author_id):
 
 
 def get_recipes(request):
-    recipes = sample(list(Recipe.objects.all()), k=2)
+    recipes = sample(list(Recipe.objects.all()), k=5)
     context = {'title': 'Список рецептов', 'recipes': recipes}
     return render(request, 'app/index.html', context=context)
 
@@ -156,7 +155,7 @@ def registration(request):
         if form.is_valid():
             form.save()
             recipes = Recipe.objects.all()
-            result = sample(list(recipes), k=1)
+            result = sample(list(recipes), k=5)
             context = {'title': 'Список рецептов', 'recipes': result}
             return render(request, 'app/index.html', context=context)
     else:
@@ -178,11 +177,11 @@ def signin(request):
                 if user.author:
                     recipes = Recipe.objects.filter(author=user).all()
                     if len(recipes) == 0:
-                        recipes = sample(list(Recipe.objects.all()), k=1)
+                        recipes = sample(list(Recipe.objects.all()), k=5)
                     context = {'title': 'Добро пожалывать на наш сайт!', 'recipes': recipes}
                     return render(request, 'app/index_login_author.html', context=context)
                 else:
-                    recipes = sample(list(Recipe.objects.all()), k=2)
+                    recipes = sample(list(Recipe.objects.all()), k=5)
                     context = {'title': 'Добро пожалывать на наш сайт!', 'recipes': recipes}
                     return render(request, 'app/index_login.html', context=context)
     context = {'title':'Авторизация пользователя','form': form}
