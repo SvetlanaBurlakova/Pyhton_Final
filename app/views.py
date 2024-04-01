@@ -126,7 +126,7 @@ def delete_recipe(request, recipe_id):
     recipes = Recipe.objects.filter(author=user).all()
     if len(recipes) == 0:
         recipes = sample(list(Recipe.objects.all()), k=2)
-        context = {'title': 'Рецепт удален, У вас нет больше загруженных рецептов', 'recipes': recipes}
+        context = {'title': 'Рецепт удален, У вас нет больше загруженных рецептов', 'recipes': []}
     else:
         context = {'title': 'Рецепт удален', 'recipes': recipes}
     return render(request, 'app/index_login_author.html', context=context)
@@ -137,7 +137,7 @@ def get_recipes_by_author(request, author_id):
     recipes = Recipe.objects.filter(author=user).all()
     if len(recipes) == 0:
         recipes = sample(list(Recipe.objects.all()), k=5)
-        context ={'title': 'У вас нет загруженных рецептов', 'recipes': recipes}
+        context ={'title': 'У вас нет загруженных рецептов', 'recipes': []}
     else:
         context = {'title': 'Список ваших рецептов', 'recipes': recipes}
     return render(request, 'app/index_login_author.html', context=context)
@@ -177,7 +177,8 @@ def signin(request):
                 if user.author:
                     recipes = Recipe.objects.filter(author=user).all()
                     if len(recipes) == 0:
-                        recipes = sample(list(Recipe.objects.all()), k=5)
+                        #recipes = sample(list(Recipe.objects.all()), k=5)
+                        recipes = []
                     context = {'title': 'Добро пожалывать на наш сайт!', 'recipes': recipes}
                     return render(request, 'app/index_login_author.html', context=context)
                 else:
