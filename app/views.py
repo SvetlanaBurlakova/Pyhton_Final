@@ -100,8 +100,12 @@ def change_recipe(request, recipe_id):
             for categoryEntity in categories_set:
                 recipe.category.add(categoryEntity)
             recipe.save()
-            Recipe.objects.filter(pk=recipe_id).update(name=name, description=description, steps=steps, cooking_time=cooking_time,
+            if image is not None:
+                Recipe.objects.filter(pk=recipe_id).update(name=name, description=description, steps=steps, cooking_time=cooking_time,
                           image=image, author=author)
+            else:
+                Recipe.objects.filter(pk=recipe_id).update(name=name, description=description, steps=steps,
+                                                           cooking_time=cooking_time, author=author)
             recipe = Recipe.objects.get(pk=recipe_id)
             context = {'title': name, 'recipe': recipe, 'categories': categories_set}
             return render(request, 'app/recipe_auth.html', context=context)
