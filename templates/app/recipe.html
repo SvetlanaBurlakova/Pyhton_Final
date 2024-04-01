@@ -34,12 +34,12 @@
     <p><b>Этапы приготовления:</b></p>
     <p>{{ recipe.steps }}</p>
     <p><b>Время приготовления: {{ recipe.cooking_time }}</b></p>
-    <p><b>Автор рецепта: {{ recipe.author }}<b></p>
-    <p><b>Категории рецепта:<b></p>
+    <p><b>Автор рецепта: {{ recipe.author }}</b></p>
+    <p><b>Категории рецепта:</b></p>
     {% for cat in categories %}
         <p><a href='{% url "category" cat.id %}'>{{ cat.name }}</a></p>
     {% endfor %}
     {% if recipe.image %}
         <p><img src="{{ recipe.image.url }}" alt=""> </p>
-    {% endif %}">
+    {% endif %}
 {% endblock %}
