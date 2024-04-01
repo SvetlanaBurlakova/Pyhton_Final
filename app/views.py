@@ -39,7 +39,6 @@ def get_recipe_auth(request, recipe_id):
     return render(request, 'app/recipe_auth.html', context=context)
 
 
-
 def category(request, category_id):
     category= get_object_or_404(Category, pk=category_id)
     recipes = Recipe.objects.filter(category=category).all()
@@ -102,6 +101,8 @@ def change_recipe(request, recipe_id):
             for categoryEntity in categories_set:
                 recipe.category.add(categoryEntity)
             recipe.save()
+            Recipe.objects.filter(pk=recipe_id).update(name=name, description=description, steps=steps, cooking_time=cooking_time,
+                            image=image, author=author)
             context = {'title': name, 'recipe': recipe, 'categories': categories_set}
             return render(request, 'app/recipe_auth.html', context=context)
 
@@ -122,6 +123,7 @@ def change_recipe(request, recipe_id):
 
 def delete_recipe(request, recipe_id):
     Recipe.objects.filter(pk=recipe_id).delete()
+    print(recipe_id)
     user = User.objects.get(pk=request.user.id)
     recipes = Recipe.objects.filter(author=user).all()
     if len(recipes) == 0:
