@@ -33,7 +33,12 @@
 	<h1 align="center">
         {{ title }}
     </h1>
-    <h2><a href='{% url "change_recipe" recipe.id %}'>Изменить рецепт</a></h2>
+    <table>
+    <tr>
+        <td><a href='{% url "change_recipe" recipe.id %}'>Изменить рецепт</a></td>
+        <td><a href='{% url "delete_recipe" recipe.id %}'>Удалить рецепт</a></td>
+    </tr>
+    </table>
 
     <p ><b>{{ recipe.description }}</b></p>
         <p><b>Список ингредиентов:</b></p>
